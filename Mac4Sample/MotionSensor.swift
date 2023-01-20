@@ -64,7 +64,7 @@ class MotionSensor: NSObject, ObservableObject {
             // 配列からCSV形式の文字列を作成する
             var csv = "Time,X,Y,Z\n"
             datas.forEach { data in
-                csv.append(contentsOf: "\(data.elapsedTime),\(data.x),\(data.y),\(data.z)\n")
+                csv.append(contentsOf: "\(String(format:"%.2f",data.elapsedTime)),\(data.x),\(data.y),\(data.z)\n")
             }
             
             // ファイル名は日付＋時刻とする
