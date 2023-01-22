@@ -25,12 +25,14 @@ struct ContentView: View {
             Text(sensor.yStr)
             Text(sensor.zStr)
             //時間表示
+            
+            
                  
-            Button(action: {
-                self.sensor.isStarted ? self.sensor.stop() : self.sensor.start()
-            }) {
-                self.sensor.isStarted ? Text("STOP") : Text("START")
-            }
+            Button(action:
+                    {self.sensor.isStarted ? self.sensor.stop() : self.sensor.start()})
+            {self.sensor.isStarted ? Text("STOP") : Text("START")}
+            
+            
             Spacer()
             Button(action: {
                 sensor.share()
@@ -38,6 +40,14 @@ struct ContentView: View {
                 Image(systemName:"square.and.arrow.up")
             }
             Spacer()
+            
+            //新しいボタン（シンクロ）
+            Button(action: {
+                print("1")
+            }, label: {
+                Image(systemName:"personalhotspot.circle.fill")
+            })
+            
         }
     }
 }
