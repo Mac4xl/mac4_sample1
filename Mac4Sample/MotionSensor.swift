@@ -31,6 +31,10 @@ class MotionSensor: NSObject, ObservableObject {
     //時間経過ゼロ
     var elapsedTime = 0.00
     
+    //同期
+    var sync = 0
+    
+    
     func start() {
         if motionManager.isDeviceMotionAvailable {
             isStarted = true
@@ -44,7 +48,7 @@ class MotionSensor: NSObject, ObservableObject {
             elapsedTime = 0.00
             
             // センサー値の取得を開始
-            motionManager.deviceMotionUpdateInterval = 0.01
+            motionManager.deviceMotionUpdateInterval = 0.1
             motionManager.startDeviceMotionUpdates(to: OperationQueue.current!, withHandler: {(motion:CMDeviceMotion?, error:Error?) in
                 self.updateMotionData(deviceMotion: motion!)
                     
@@ -62,9 +66,9 @@ class MotionSensor: NSObject, ObservableObject {
         if !datas.isEmpty {
             
             // 配列からCSV形式の文字列を作成する
-            var csv = "Time,X,Y,Z\n"
+            var csv = "Time,X,Y,Z,sync\n"
             datas.forEach { data in
-                csv.append(contentsOf: "\(String(format:"%.2f",data.elapsedTime)),\(data.x),\(data.y),\(data.z)\n")
+                csv.append(contentsOf: "\(String(format:"%.2f",data.elapsedTime)),\(data.x),\(data.y),\(data.z),\(data.sync)\n")
             }
             
             // ファイル名は日付＋時刻とする
@@ -96,13 +100,16 @@ class MotionSensor: NSObject, ObservableObject {
             print("ファイルパス: \(sharePath)")
         }
     }
-    
+//    同期の関数
+    func syncr() {
+        sync=1
+    }
+
     func share() {
         // データ取得前は共有しない
         if sharePath.isEmpty {
             return
         }
-        
         // ファイルを共有画面(画面下から上がるポップアップ)にセット
         let items = [URL(fileURLWithPath: sharePath)] as [Any]
         let activityVC = UIActivityViewController(activityItems: items, applicationActivities: nil)
@@ -118,15 +125,19 @@ class MotionSensor: NSObject, ObservableObject {
             return
         }
         
-        elapsedTime = elapsedTime + 0.01
-        
+        elapsedTime = elapsedTime + 0.1
         xStr = String(deviceMotion.userAcceleration.x)
         yStr = String(deviceMotion.userAcceleration.y)
         zStr = String(deviceMotion.userAcceleration.z)
         
         // データを配列に追加
-        let data = MotionData(elapsedTime: elapsedTime, x: deviceMotion.userAcceleration.x, y: deviceMotion.userAcceleration.y, z: deviceMotion.userAcceleration.z)
+        let data = MotionData(elapsedTime: elapsedTime, x: deviceMotion.userAcceleration.x, y: deviceMotion.userAcceleration.y, z: deviceMotion.userAcceleration.z,sync: sync)
                 datas.append(data)
+        
+        if sync == 1 {
+            return sync = 0
+            
+        }
     }
     
 }
