@@ -34,6 +34,9 @@ class MotionSensor: NSObject, ObservableObject {
     //同期
     var sync = 0
     
+    //姿勢変換
+    var Standing = true
+    
     
     func start() {
         if motionManager.isDeviceMotionAvailable {
@@ -126,9 +129,17 @@ class MotionSensor: NSObject, ObservableObject {
         }
         
         elapsedTime = elapsedTime + 0.1
-        xStr = String(deviceMotion.userAcceleration.x)
-        yStr = String(deviceMotion.userAcceleration.y)
-        zStr = String(deviceMotion.userAcceleration.z)
+        
+        xStr = String(deviceMotion.attitude.pitch*180 / Double.pi)
+        yStr = String(deviceMotion.attitude.roll*180 / Double.pi )
+        zStr = String(deviceMotion.attitude.yaw*180 / Double.pi )
+        
+        if Standing{
+            xStr = String((deviceMotion.attitude.pitch*180 / Double.pi)-90)
+        }else{
+            xStr = String(deviceMotion.attitude.pitch*180 / Double.pi)
+        }
+        
         
         // データを配列に追加
         let data = MotionData(elapsedTime: elapsedTime, x: deviceMotion.userAcceleration.x, y: deviceMotion.userAcceleration.y, z: deviceMotion.userAcceleration.z,sync: sync)
