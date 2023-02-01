@@ -16,6 +16,7 @@ class MotionSensor: NSObject, ObservableObject {
     @Published var isStarted = false
     
     @Published var xStr = "0.0"
+    @Published var xStr2 = "0.0"
     @Published var yStr = "0.0"
     @Published var zStr = "0.0"
     
@@ -69,9 +70,9 @@ class MotionSensor: NSObject, ObservableObject {
         if !datas.isEmpty {
             
             // 配列からCSV形式の文字列を作成する
-            var csv = "Time,X,Y,Z,sync\n"
+            var csv = "Time,X,X2,Y,Z,sync\n"
             datas.forEach { data in
-                csv.append(contentsOf: "\(String(format:"%.2f",data.elapsedTime)),\(data.x),\(data.y),\(data.z),\(data.sync)\n")
+                csv.append(contentsOf: "\(String(format:"%.2f",data.elapsedTime)),\(String(format:"%.2f",data.x)),\(String(format:"%.2f",data.x2)),\(String(format:"%.2f",data.y)),\(String(format:"%.2f",data.z)),\(data.sync)\n")
             }
             
             // ファイル名は日付＋時刻とする
@@ -130,23 +131,47 @@ class MotionSensor: NSObject, ObservableObject {
         
         elapsedTime = elapsedTime + 0.1
         
-        xStr = String(deviceMotion.attitude.pitch*180 / Double.pi)
-        yStr = String(deviceMotion.attitude.roll*180 / Double.pi )
-        zStr = String(deviceMotion.attitude.yaw*180 / Double.pi )
+        
+        let attitude = deviceMotion.attitude
+
+        let qw = attitude.quaternion.w
+        let qx = attitude.quaternion.x
+        let qy = attitude.quaternion.y
+        let qz = attitude.quaternion.z
+
+        let qpitch = atan2((2 * (qw * qx + qy * qz)), 1 - 2 * (qx * qx + qy * qy))
+        
+        
+        
+        xStr = String(format:"%.2f",deviceMotion.attitude.pitch*180 / Double.pi )
+        xStr2 = String(qpitch)
+        yStr = String(format:"%.2f",deviceMotion.attitude.roll*180 / Double.pi )
+        zStr = String(format:"%.2f",deviceMotion.attitude.yaw*180 / Double.pi )
         
         if Standing{
-            xStr = String((deviceMotion.attitude.pitch*180 / Double.pi)-90)
-        }else{
-            xStr = String(deviceMotion.attitude.pitch*180 / Double.pi)
+                    xStr = String(format:"%.2f",(deviceMotion.attitude.pitch*180 / Double.pi)-90)
+                }else{
+                    xStr = String(format:"%.2f",deviceMotion.attitude.pitch*180 / Double.pi)
+                }
+        
+        
+        if Standing{
+            xStr2 = String(qpitch-90)
+            }else{
+                xStr2 = String(qpitch)
+                
+            
         }
         
+        //let nxStr:Double = Double(xStr2)!
         
         // データを配列に追加
-        let data = MotionData(elapsedTime: elapsedTime, x: deviceMotion.userAcceleration.x, y: deviceMotion.userAcceleration.y, z: deviceMotion.userAcceleration.z,sync: sync)
+        let data = MotionData(elapsedTime: elapsedTime, x:deviceMotion.attitude.pitch*180/Double.pi,x2:qpitch,y:deviceMotion.attitude.roll*180 / Double.pi, z: deviceMotion.attitude.yaw*180 / Double.pi,sync: sync)
                 datas.append(data)
         
+        //同期
         if sync == 1 {
-            return sync = 0
+            sync = 0
             
         }
     }

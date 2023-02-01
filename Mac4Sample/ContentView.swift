@@ -24,6 +24,7 @@ struct ContentView: View {
         VStack {
                 Spacer()
                 Text(sensor.xStr)
+                Text(sensor.xStr2)
                 Text(sensor.yStr)
                 Text(sensor.zStr)
                 //時間表示
@@ -52,7 +53,7 @@ struct ContentView: View {
                 Spacer()
                 
                 //新しいボタン（縦90度）
-                Toggle(isOn: $Standing){
+                    Toggle(isOn: $sensor.Standing){
                     Text("Stand")
                 }
                 Spacer()
