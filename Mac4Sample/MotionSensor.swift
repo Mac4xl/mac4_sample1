@@ -144,7 +144,7 @@ class MotionSensor: NSObject, ObservableObject {
         
         
         xStr = String(format:"%.2f",deviceMotion.attitude.pitch*180 / Double.pi )
-        xStr2 = String(qpitch)
+        xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
         yStr = String(format:"%.2f",deviceMotion.attitude.roll*180 / Double.pi )
         zStr = String(format:"%.2f",deviceMotion.attitude.yaw*180 / Double.pi )
         
@@ -156,9 +156,9 @@ class MotionSensor: NSObject, ObservableObject {
         
         
         if Standing{
-            xStr2 = String(qpitch-90)
+            xStr2 = String(format:"%.2f",qpitch*57.12-90)
             }else{
-                xStr2 = String(qpitch)
+                xStr2 = String(format:"%.2f",qpitch*57.12)
                 
             
         }
