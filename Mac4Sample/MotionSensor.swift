@@ -18,6 +18,7 @@ class MotionSensor: NSObject, ObservableObject {
     @Published var xStr = "0.0"
     @Published var xStr2 = "0.0"
     @Published var yStr = "0.0"
+    @Published var yStr2 = "0.0"
     @Published var zStr = "0.0"
     
     // CoreMotionのCMMotionManagerを保持する
@@ -70,9 +71,9 @@ class MotionSensor: NSObject, ObservableObject {
         if !datas.isEmpty {
             
             // 配列からCSV形式の文字列を作成する
-            var csv = "Time,X,X2,Y,Z,sync\n"
+            var csv = "Time,X,X2,Y,Y2,sync\n"
             datas.forEach { data in
-                csv.append(contentsOf: "\(String(format:"%.2f",data.elapsedTime)),\(String(format:"%.2f",data.x)),\(String(format:"%.2f",data.x2)),\(String(format:"%.2f",data.y)),\(String(format:"%.2f",data.z)),\(data.sync)\n")
+                csv.append(contentsOf: "\(String(format:"%.2f",data.elapsedTime)),\(String(format:"%.2f",data.x)),\(String(format:"%.2f",data.x2)),\(String(format:"%.2f",data.y)),\(String(format:"%.2f",data.y2)),\(data.sync)\n")
             }
             
             // ファイル名は日付＋時刻とする
@@ -140,13 +141,13 @@ class MotionSensor: NSObject, ObservableObject {
         let qz = attitude.quaternion.z
 
         let qpitch = atan2((2 * (qw * qx + qy * qz)), 1 - 2 * (qx * qx + qy * qy))
-        
-        
+        let qroll = 2*atan2 ( sqrt ( 1 + 2 * ( qw * qy - qx * qz )),sqrt ( 1 - 2 * ( qw * qy - qx * qz )) ) - (Double.pi/2)
         
         xStr = String(format:"%.2f",deviceMotion.attitude.pitch*180 / Double.pi )
         xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
         yStr = String(format:"%.2f",deviceMotion.attitude.roll*180 / Double.pi )
-        zStr = String(format:"%.2f",deviceMotion.attitude.yaw*180 / Double.pi )
+        yStr2 = String(format:"%.2f",qroll*180 / Double.pi)
+
         
         if Standing{
                     xStr = String(format:"%.2f",(deviceMotion.attitude.pitch*180 / Double.pi)-90)
@@ -156,9 +157,9 @@ class MotionSensor: NSObject, ObservableObject {
         
         
         if Standing{
-            xStr2 = String(format:"%.2f",qpitch*57.12-90)
+            xStr2 = String(format:"%.2f",qpitch*180 / Double.pi-90)
             }else{
-                xStr2 = String(format:"%.2f",qpitch*57.12)
+                xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
                 
             
         }
@@ -166,7 +167,11 @@ class MotionSensor: NSObject, ObservableObject {
         //let nxStr:Double = Double(xStr2)!
         
         // データを配列に追加
-        let data = MotionData(elapsedTime: elapsedTime, x:deviceMotion.attitude.pitch*180/Double.pi,x2:qpitch,y:deviceMotion.attitude.roll*180 / Double.pi, z: deviceMotion.attitude.yaw*180 / Double.pi,sync: sync)
+        
+        
+        
+        
+        let data = MotionData(elapsedTime: elapsedTime, x:deviceMotion.attitude.pitch*180 / Double.pi,x2:qpitch*180 / Double.pi,y:deviceMotion.attitude.roll*180 / Double.pi, y2:qroll*180 / Double.pi,sync: sync)
                 datas.append(data)
         
         //同期

@@ -26,7 +26,7 @@ struct ContentView: View {
                 Text(sensor.xStr)
                 Text(sensor.xStr2)
                 Text(sensor.yStr)
-                Text(sensor.zStr)
+                Text(sensor.yStr2)
                 //時間表示
                 
                 Group{
