@@ -16,59 +16,97 @@ struct MyData {
 
 
 struct ContentView: View {
+    
+    
+    
     @ObservedObject var sensor = MotionSensor()
     
-    @State var Standing = true
     
     var body: some View {
-        VStack {
+        NavigationView {
+            VStack {
                 Spacer()
-                Text(sensor.xStr)
-                Text(sensor.xStr2)
-                Text(sensor.yStr)
-                Text(sensor.yStr2)
+                HStack {
+                    Text("X:")
+                        .font(.system(size: 60.0))
+                    Text(sensor.xStr2)
+                        .font(.system(size: 60.0))
+                }
+                HStack {
+                    Text("Y:")
+                        .font(.system(size: 60.0))
+                    Text(sensor.yStr2)
+                        .font(.system(size: 60.0))
+                }
+                Spacer()
                 //時間表示
                 
                 Group{
-                Button(action:
-                        {self.sensor.isStarted ? self.sensor.stop() : self.sensor.start()})
-                {self.sensor.isStarted ? Text("STOP") : Text("START")}
-                
-                Spacer()
-                
-                Button(action: {
-                    sensor.share()
-                }) {
-                    Image(systemName:"square.and.arrow.up")
-                }
-                Spacer()
-                
-                //新しいボタン（シンクロ）
-                Button(action: {
-                    sensor.syncr()
-                }) {
-                    Image(systemName:"personalhotspot.circle.fill")
-                }
-                
-                Spacer()
-                
-                //新しいボタン（縦90度）
+                    Button(action:
+                            {self.sensor.isStarted ? self.sensor.stop() : self.sensor.start()})
+                    {self.sensor.isStarted ? Text("STOP") : Text("START")}
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        sensor.share()
+                    }) {
+                        Label("shere", systemImage: "square.and.arrow.up")
+                    }
+                    Spacer()
+                    
+                    //新しいボタン（シンクロ）
+                    Button(action: {
+                        sensor.syncr()
+                    }) {
+                        Label("sync", systemImage: "personalhotspot.circle.fill")
+                    }
+                    
+                    Spacer()
+                    
+                    //新しいボタン（縦90度）
                     Toggle(isOn: $sensor.Standing){
-                    Text("Stand")
+                        Text("Stand")
+                        
+                    }
+                    Spacer()
                 }
-                Spacer()
+                //サブビュー
+                NavigationLink (destination: SubView()){
+                    Label("Visual", systemImage: "arrowshape.right.fill")
+                    Image(systemName: "eye.circle")
+                }
+                .navigationTitle("Angle")
+                
             }
-            
         }
-        
-        
+        .navigationViewStyle(.stack)
     }
     
 }
+struct SubView: View {
+    @StateObject private var viewModel = BraBallGameViewModel()
+    
+    var body: some View {
+        
+        GeometryReader { proxy in
+            
+            let _ = viewModel.setupScreenRect(proxy.frame(in: .local))
+            
+            ZStack {
+                
+                SoccerBall(length: viewModel.ballLength)
+                    .position(viewModel.currentBallPosition)
+            }
+        }
+    }
+    
+    
     
     struct ContentView_Previews: PreviewProvider {
         static var previews: some View {
             ContentView()
         }
     }
-
+    
+}

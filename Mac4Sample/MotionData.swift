@@ -9,9 +9,10 @@ import Foundation
 
 struct MotionData {
     var elapsedTime: Double
-    var x: Double
     var x2:Double
-    var y: Double
     var y2: Double
+    var x: Double
+    var y: Double
+    var z: Double
     var sync: Int
 }

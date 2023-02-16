@@ -13,6 +13,8 @@
 		24144A1C29615540000872A6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 24144A1B29615540000872A6 /* Preview Assets.xcassets */; };
 		24144A23296155D2000872A6 /* MotionSensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24144A22296155D2000872A6 /* MotionSensor.swift */; };
 		24144A25296158CE000872A6 /* MotionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24144A24296158CE000872A6 /* MotionData.swift */; };
+		86FD326A299D08CE00142977 /* SoccerBall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86FD3269299D08CE00142977 /* SoccerBall.swift */; };
+		86FD3283299DA59B00142977 /* BraBallGameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86FD3282299DA59B00142977 /* BraBallGameViewModel.swift */; };
 		EDE06130ED8C92B61D07E732 /* Pods_Mac4Sample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D784988A3BF81F33068D16ED /* Pods_Mac4Sample.framework */; };
 /* End PBXBuildFile section */
 
@@ -24,6 +26,8 @@
 		24144A1B29615540000872A6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		24144A22296155D2000872A6 /* MotionSensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionSensor.swift; sourceTree = "<group>"; };
 		24144A24296158CE000872A6 /* MotionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionData.swift; sourceTree = "<group>"; };
+		86FD3269299D08CE00142977 /* SoccerBall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerBall.swift; sourceTree = "<group>"; };
+		86FD3282299DA59B00142977 /* BraBallGameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BraBallGameViewModel.swift; sourceTree = "<group>"; };
 		8F91D673FF6BF4F618778705 /* Pods-Mac4Sample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mac4Sample.debug.xcconfig"; path = "Target Support Files/Pods-Mac4Sample/Pods-Mac4Sample.debug.xcconfig"; sourceTree = "<group>"; };
 		A601563159C8306A1CCBB8E2 /* Pods-Mac4Sample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mac4Sample.release.xcconfig"; path = "Target Support Files/Pods-Mac4Sample/Pods-Mac4Sample.release.xcconfig"; sourceTree = "<group>"; };
 		D784988A3BF81F33068D16ED /* Pods_Mac4Sample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Mac4Sample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,7 +71,9 @@
 				24144A1829615540000872A6 /* Assets.xcassets */,
 				24144A1A29615540000872A6 /* Preview Content */,
 				24144A22296155D2000872A6 /* MotionSensor.swift */,
+				86FD3282299DA59B00142977 /* BraBallGameViewModel.swift */,
 				24144A24296158CE000872A6 /* MotionData.swift */,
+				86FD3268299D08A200142977 /* Vlew */,
 			);
 			path = Mac4Sample;
 			sourceTree = "<group>";
@@ -86,6 +92,14 @@
 				D784988A3BF81F33068D16ED /* Pods_Mac4Sample.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		86FD3268299D08A200142977 /* Vlew */ = {
+			isa = PBXGroup;
+			children = (
+				86FD3269299D08CE00142977 /* SoccerBall.swift */,
+			);
+			path = Vlew;
 			sourceTree = "<group>";
 		};
 		C90B42341BDD06285DCC4630 /* Pods */ = {
@@ -212,7 +226,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				24144A23296155D2000872A6 /* MotionSensor.swift in Sources */,
+				86FD3283299DA59B00142977 /* BraBallGameViewModel.swift in Sources */,
 				24144A172961553F000872A6 /* ContentView.swift in Sources */,
+				86FD326A299D08CE00142977 /* SoccerBall.swift in Sources */,
 				24144A152961553F000872A6 /* Mac4SampleApp.swift in Sources */,
 				24144A25296158CE000872A6 /* MotionData.swift in Sources */,
 			);
