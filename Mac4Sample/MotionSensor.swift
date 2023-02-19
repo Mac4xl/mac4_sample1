@@ -22,23 +22,6 @@ class MotionSensor: NSObject, ObservableObject {
     @Published var yStr2 = "0.0"
     @Published var zStr = "0.0"
     
-//    //visual
-//    
-//    
-//    @Published var currentBallPosition: CGPoint = CGPoint()
-//    
-//    let ballLength: CGFloat = 120
-//    private var screenRect = CGRect()
-//    private var currentBallMinX: CGFloat {
-//        currentBallPosition.x - ballLength / 2
-//    }
-//    
-//    // MARK: - Public Function
-//    
-//    func setupScreenRect(_ rect: CGRect) {
-//        screenRect = rect
-//    }
-    
     
     // CoreMotionのCMMotionManagerを保持する
     let motionManager = CMMotionManager()
@@ -180,49 +163,8 @@ class MotionSensor: NSObject, ObservableObject {
             
         }
         
-//        let coefficient: CGFloat = 5
-//        
-//        let currentPositionX = CGFloat(qpitch*180 / Double.pi) * coefficient
-//        let currentPositionY = CGFloat(qpitch*180 / Double.pi) * coefficient
-//        
-//        print("x: ", currentPositionX)
-//        print("y: ", currentPositionY)
-//       
-//        Task { @MainActor in
-//            currentBallPosition = CGPoint(x: currentPositionX,
-//                                               y: currentPositionY)
-//        }
-        
     }
                                     
-    
-    /// 与えられたxと現在のターゲットの位置xを合算し、必要であればスクリーンの内側の値になるように補正された値を算出する
-    /// - Parameter x: 現在のターゲットの位置xを算出する為に追加する値
-    /// - Returns: 算出された現在のターゲットの位置x
-//    private func calculatedCurrentPositionX(byAdding x: CGFloat) -> CGFloat {
-//        var position = currentBallPosition
-//        position.x += x
-//        if screenRect.minX > position.x {
-//            position.x = screenRect.minX
-//        } else if screenRect.maxX < position.x {
-//            position.x = screenRect.maxX
-//        }
-//        return position.x
-//    }
-    
-    /// 与えられたyと現在のターゲットの位置yを合算し、必要であればスクリーンの内側の値になるように補正された値を算出する
-    /// - Parameter x: 現在のターゲットの位置yを算出する為に追加する値
-    /// - Returns: 算出された現在のターゲットの位置y
-//    private func calculatedCurrentPositionY(byAdding y: CGFloat) -> CGFloat {
-//        var position = currentBallPosition
-//        position.y += y
-//        if screenRect.minY > position.y {
-//            position.y = screenRect.minY
-//        } else if screenRect.maxY < position.y {
-//            position.y = screenRect.maxY
-//        }
-//        return position.y
-//    }
 }
 
     

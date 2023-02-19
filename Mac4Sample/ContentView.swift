@@ -85,19 +85,19 @@ struct ContentView: View {
     
 }
 struct SubView: View {
-    @StateObject private var viewModel = BraBallGameViewModel()
+    @ObservedObject var sensor = MotionSensor()
+    @StateObject private var viewModel = ViewSensor()
     
     var body: some View {
+        ZStack {
+            SoccerBall(length: viewModel.ballLength)
+                .position(viewModel.currentBallPosition)
+        }
         
-        GeometryReader { proxy in
+        //新しいボタン（縦90度）
+        Toggle(isOn: $sensor.Standing){
+            Text("Stand")
             
-            let _ = viewModel.setupScreenRect(proxy.frame(in: .local))
-            
-            ZStack {
-                
-                SoccerBall(length: viewModel.ballLength)
-                    .position(viewModel.currentBallPosition)
-            }
         }
     }
     
