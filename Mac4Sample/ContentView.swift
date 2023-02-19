@@ -95,7 +95,7 @@ struct SubView: View {
         }
         
         //新しいボタン（縦90度）
-        Toggle(isOn: $sensor.Standing){
+        Toggle(isOn: $viewModel.Standing){
             Text("Stand")
             
         }

@@ -77,23 +77,30 @@ class ViewSensor: ObservableObject {
             
             
             let xAngle = qroll*180 / Double.pi
-            let yAngle = qpitch*180 / Double.pi
+            var yAngle = qpitch*180 / Double.pi
             
-//            if Standing{
-//                yAngle = qpitch*180 / Double.pi+90
-//            }else{
-//                yAngle = qpitch*180 / Double.pi
-//
-//            }
+            if self.Standing{
+                yAngle = qpitch*180 / Double.pi+90
+            }else{
+                yAngle = qpitch*180 / Double.pi
+
+            }
             
             /// 係数を使って感度を調整する
-            let coefficient: CGFloat = 2
+            let coefficient: CGFloat = 3
             
             let regulatedX = CGFloat(xAngle) * coefficient
             let regulatedY = CGFloat(yAngle) * coefficient
             
             let currentPositionX = regulatedX+150
             let currentPositionY = regulatedY+200
+            
+//            if Standing2{
+//                regulatedX=regulatedX+300
+//            }else{
+//                regulatedX=regulatedX
+//
+//            }
             
             
             Task { @MainActor in
