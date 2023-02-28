@@ -14,17 +14,17 @@ struct MyData {
 }
 
 
-
 struct ContentView: View {
-    
-    
     
     @ObservedObject var sensor = MotionSensor()
     
     
     var body: some View {
+        
         NavigationView {
+            
             VStack {
+                
                 Spacer()
                 HStack {
                     Text("X:")
@@ -40,8 +40,8 @@ struct ContentView: View {
                 }
                 Spacer()
                 //時間表示
-                
                 Group{
+                    
                     Button(action:
                             {self.sensor.isStarted ? self.sensor.stop() : self.sensor.start()})
                     {self.sensor.isStarted ? Text("STOP") : Text("START")}
@@ -77,36 +77,41 @@ struct ContentView: View {
                     Image(systemName: "eye.circle")
                 }
                 .navigationTitle("Angle")
+                .navigationViewStyle(.stack)
                 
             }
         }
-        .navigationViewStyle(.stack)
-    }
-    
-}
-struct SubView: View {
-    @ObservedObject var sensor = MotionSensor()
-    @StateObject private var viewModel = ViewSensor()
-    
-    var body: some View {
-        ZStack {
-            SoccerBall(length: viewModel.ballLength)
-                .position(viewModel.currentBallPosition)
-        }
-        
-        //新しいボタン（縦90度）
-        Toggle(isOn: $viewModel.Standing){
-            Text("Stand")
+        struct SubView: View {
+            
+            @StateObject private var viewModel = MotionSensor()
+            
+            var body: some View {
+                ZStack {
+                    SoccerBall(length: viewModel.ballLength)
+                        .position(viewModel.currentBallPosition)
+                }
+                
+                
+                Spacer()
+                
+                //新しいボタン（縦90度）
+                Toggle(isOn: $viewModel.Standing){
+                    Text("Stand")
+                    
+                }
+            }
+            
+            
+            
+            struct ContentView_Previews: PreviewProvider {
+                static var previews: some View {
+                    ContentView()
+                }
+            }
             
         }
+        
     }
     
-    
-    
-    struct ContentView_Previews: PreviewProvider {
-        static var previews: some View {
-            ContentView()
-        }
-    }
     
 }
