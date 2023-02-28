@@ -6,8 +6,7 @@
 
 import CoreMotion
 
-class MotionSensor: ObservableObject {
-    
+class MotionSensor:NSObject, ObservableObject{
 
     
     init() {
