@@ -16,7 +16,7 @@ struct MyData {
 
 struct ContentView: View {
     
-    @ObservedObject var sensor = MotionSensor()
+    @ObservedObject var sensor = ContentViewModel()
     
     
     var body: some View {
@@ -77,41 +77,20 @@ struct ContentView: View {
                     Image(systemName: "eye.circle")
                 }
                 .navigationTitle("Angle")
-                .navigationViewStyle(.stack)
                 
             }
         }
-        struct SubView: View {
-            
-            @StateObject private var viewModel = MotionSensor()
-            
-            var body: some View {
-                ZStack {
-                    SoccerBall(length: viewModel.ballLength)
-                        .position(viewModel.currentBallPosition)
-                }
-                
-                
-                Spacer()
-                
-                //新しいボタン（縦90度）
-                Toggle(isOn: $viewModel.Standing){
-                    Text("Stand")
-                    
-                }
-            }
-            
-            
-            
-            struct ContentView_Previews: PreviewProvider {
-                static var previews: some View {
-                    ContentView()
-                }
-            }
-            
-        }
-        
+        .navigationViewStyle(.stack)
     }
     
-    
 }
+
+
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+
+

@@ -1,21 +1,22 @@
 //
-//  BraBallGameViewModel.swift
+//  SubViewModel.swift
 //  Mac4Sample
 //
-//  Created by 塩見誠 on 2023/02/16.
+//  Created by 塩見誠 on 2023/02/28.
+//
 
 import CoreMotion
 
-class MotionSensor:NSObject, ObservableObject{
+class SubViewModel: ObservableObject{
+    var motionsensor=MotionSensor.shared
 
-    
     init() {
         startMotion()
     }
     
     @Published var currentBallPosition: CGPoint = .init()
     let ballLength: CGFloat = 120
-    private let motionManager = CMMotionManager()
+    let motionManager = CMMotionManager()
     //姿勢変換
     var Standing = true
     

@@ -12,10 +12,11 @@
 		24144A1C29615540000872A6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 24144A1B29615540000872A6 /* Preview Assets.xcassets */; };
 		24144A23296155D2000872A6 /* MotionSensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24144A22296155D2000872A6 /* MotionSensor.swift */; };
 		24144A25296158CE000872A6 /* MotionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24144A24296158CE000872A6 /* MotionData.swift */; };
-		863C43FE299F658200D5250F /* ViewSensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863C43FD299F658200D5250F /* ViewSensor.swift */; };
 		8645CA3729A2231800781BF2 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8645CA3629A2231800781BF2 /* Media.xcassets */; };
 		8645CA3929A2295700781BF2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8645CA3829A2295700781BF2 /* Assets.xcassets */; };
-		86C8894B29ADF5D4006BAE8A /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C8894A29ADF5D4006BAE8A /* MotionManager.swift */; };
+		86C8894F29AE0012006BAE8A /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C8894E29AE0012006BAE8A /* ContentViewModel.swift */; };
+		86C8895129AE0038006BAE8A /* SubViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C8895029AE0038006BAE8A /* SubViewModel.swift */; };
+		86C8895529B18D31006BAE8A /* SubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C8895429B18D31006BAE8A /* SubView.swift */; };
 		86FD326A299D08CE00142977 /* SoccerBall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86FD3269299D08CE00142977 /* SoccerBall.swift */; };
 		EDE06130ED8C92B61D07E732 /* Pods_Mac4Sample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D784988A3BF81F33068D16ED /* Pods_Mac4Sample.framework */; };
 /* End PBXBuildFile section */
@@ -27,10 +28,11 @@
 		24144A1B29615540000872A6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		24144A22296155D2000872A6 /* MotionSensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionSensor.swift; sourceTree = "<group>"; };
 		24144A24296158CE000872A6 /* MotionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionData.swift; sourceTree = "<group>"; };
-		863C43FD299F658200D5250F /* ViewSensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewSensor.swift; sourceTree = "<group>"; };
 		8645CA3629A2231800781BF2 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		8645CA3829A2295700781BF2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "../../../Library/Mobile Documents/com~apple~CloudDocs/.Trash/Assets.xcassets"; sourceTree = "<group>"; };
-		86C8894A29ADF5D4006BAE8A /* MotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
+		86C8894E29AE0012006BAE8A /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
+		86C8895029AE0038006BAE8A /* SubViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubViewModel.swift; sourceTree = "<group>"; };
+		86C8895429B18D31006BAE8A /* SubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubView.swift; sourceTree = "<group>"; };
 		86FD3269299D08CE00142977 /* SoccerBall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerBall.swift; sourceTree = "<group>"; };
 		8F91D673FF6BF4F618778705 /* Pods-Mac4Sample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mac4Sample.debug.xcconfig"; path = "Target Support Files/Pods-Mac4Sample/Pods-Mac4Sample.debug.xcconfig"; sourceTree = "<group>"; };
 		A601563159C8306A1CCBB8E2 /* Pods-Mac4Sample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mac4Sample.release.xcconfig"; path = "Target Support Files/Pods-Mac4Sample/Pods-Mac4Sample.release.xcconfig"; sourceTree = "<group>"; };
@@ -72,12 +74,13 @@
 			children = (
 				24144A142961553F000872A6 /* Mac4SampleApp.swift */,
 				24144A162961553F000872A6 /* ContentView.swift */,
+				86C8895429B18D31006BAE8A /* SubView.swift */,
 				8645CA3829A2295700781BF2 /* Assets.xcassets */,
 				24144A1A29615540000872A6 /* Preview Content */,
 				24144A22296155D2000872A6 /* MotionSensor.swift */,
-				863C43FD299F658200D5250F /* ViewSensor.swift */,
+				86C8894E29AE0012006BAE8A /* ContentViewModel.swift */,
+				86C8895029AE0038006BAE8A /* SubViewModel.swift */,
 				24144A24296158CE000872A6 /* MotionData.swift */,
-				86C8894A29ADF5D4006BAE8A /* MotionManager.swift */,
 				86FD3268299D08A200142977 /* Vlew */,
 				8645CA3629A2231800781BF2 /* Media.xcassets */,
 			);
@@ -232,11 +235,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				863C43FE299F658200D5250F /* ViewSensor.swift in Sources */,
-				86C8894B29ADF5D4006BAE8A /* MotionManager.swift in Sources */,
 				24144A23296155D2000872A6 /* MotionSensor.swift in Sources */,
 				24144A172961553F000872A6 /* ContentView.swift in Sources */,
 				86FD326A299D08CE00142977 /* SoccerBall.swift in Sources */,
+				86C8895129AE0038006BAE8A /* SubViewModel.swift in Sources */,
+				86C8894F29AE0012006BAE8A /* ContentViewModel.swift in Sources */,
+				86C8895529B18D31006BAE8A /* SubView.swift in Sources */,
 				24144A152961553F000872A6 /* Mac4SampleApp.swift in Sources */,
 				24144A25296158CE000872A6 /* MotionData.swift in Sources */,
 			);
