@@ -16,8 +16,7 @@ struct MyData {
 
 struct ContentView: View {
     
-    @ObservedObject var sensor = ContentViewModel()
-    
+    @ObservedObject var sensor = MotionSensor()
     
     var body: some View {
         

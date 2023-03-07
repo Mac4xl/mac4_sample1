@@ -10,9 +10,10 @@ import Foundation
 import CoreMotion
 import CoreTransferable
 import SSZipArchive
+import AudioToolbox
 
 
-class MotionSensor:NSObject{
+class MotionSensor:NSObject,ObservableObject{
     static var shared=MotionSensor()
     
     
@@ -22,6 +23,10 @@ class MotionSensor:NSObject{
     @Published var yStr = "0.0"
     @Published var yStr2 = "0.0"
     @Published var zStr = "0.0"
+    //音
+    @Published var thresholdAngle: Double = -90
+    @Published var soundEnabled: Bool = true
+    
     
     
     // CoreMotionのCMMotionManagerを保持する
@@ -36,6 +41,14 @@ class MotionSensor:NSObject{
     var sync = 0
     //姿勢変換
     var Standing = true
+    
+    //視覚的FB
+    @Published var currentBallPosition: CGPoint = .init()
+    let ballLength: CGFloat = 120
+    
+    
+    //音
+    private var soundId: SystemSoundID = 1000
     
     
     
@@ -132,6 +145,7 @@ class MotionSensor:NSObject{
             return
         }
         
+        
         elapsedTime = elapsedTime + 0.1
         //角度
         let attitude = deviceMotion.attitude
@@ -144,9 +158,9 @@ class MotionSensor:NSObject{
         let qpitch = atan2((2 * (qw * qx + qy * qz)), 1 - 2 * (qx * qx + qy * qy))*(-1)
         let qroll = 2*atan2 ( sqrt ( 1 + 2 * ( qw * qy - qx * qz )),sqrt ( 1 - 2 * ( qw * qy - qx * qz )) ) - (Double.pi/2)
         
+        xStr = String(format:"%.2f",qpitch*180 / Double.pi)
         xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
         yStr2 = String(format:"%.2f",qroll*180 / Double.pi)
-        
         
         if Standing{
             xStr2 = String(format:"%.2f",qpitch*180 / Double.pi+90)
@@ -154,7 +168,37 @@ class MotionSensor:NSObject{
             xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
             
         }
+        //視覚的FBの計算
+        let xAngle = qroll*180 / Double.pi
         
+        var yAngle = qpitch*180 / Double.pi
+        if self.Standing{
+            yAngle = qpitch*180 / Double.pi+90
+        }else{
+            yAngle = qpitch*180 / Double.pi
+            
+        }
+        
+        /// 係数を使って感度を調整する
+        let coefficient: CGFloat = 5
+        let regulatedX = CGFloat(xAngle) * coefficient
+        let regulatedY = CGFloat(yAngle) * coefficient
+
+        let currentPositionX = regulatedX+150
+        let currentPositionY = regulatedY+200
+        
+        Task { @MainActor in
+            self.currentBallPosition = CGPoint(x: currentPositionX,
+                                               y: currentPositionY)
+        }
+        
+        print("x: ", currentPositionX)
+        print("y: ", currentPositionY)
+        print("qpitch: ", qpitch*180 / Double.pi)
+        
+        if soundEnabled && (qpitch*180 / Double.pi) < thresholdAngle { // 音を鳴らす設定がONで、閾値を超えた場合に音を鳴らす
+            AudioServicesPlaySystemSound(soundId)
+        }
         
         // データを配列に追加
         let data = MotionData(elapsedTime: elapsedTime, x2:qpitch*180 / Double.pi,y2:qroll*180 / Double.pi,x: deviceMotion.userAcceleration.x, y: deviceMotion.userAcceleration.y, z: deviceMotion.userAcceleration.z,sync: sync)
@@ -165,80 +209,24 @@ class MotionSensor:NSObject{
             sync = 0
             
         }
-        
-    }
 
         
-    override init() {
-        super.init()
-        startMotion()
     }
     
-    @Published var currentBallPosition: CGPoint = .init()
-    let ballLength: CGFloat = 120
     
-    
-    // MARK: - Public Function
-    
-    
-    private func startMotion() {
-        
-        guard let queue = OperationQueue.current,
-              motionManager.isDeviceMotionAvailable
-        else { return }
-        
-        motionManager.deviceMotionUpdateInterval = 1 / 100
-        motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical,
-                                               to: queue) { [weak self] motion, error in
-            
-            //わかんね
-            guard  let self = self,
-                   let motion = motion,
-                   error == nil
-            else { return }
-            
-            //クウォーターニオン角度
-            let attitude = motion.attitude
-            
-            let qw = attitude.quaternion.w
-            let qx = attitude.quaternion.x
-            let qy = attitude.quaternion.y
-            let qz = attitude.quaternion.z
-            
-            let qpitch = atan2((2 * (qw * qx + qy * qz)), 1 - 2 * (qx * qx + qy * qy))*(-1)
-            let qroll = 2*atan2 ( sqrt ( 1 + 2 * ( qw * qy - qx * qz )),sqrt ( 1 - 2 * ( qw * qy - qx * qz )) ) - (Double.pi/2)
-            
-            
-            let xAngle = qroll*180 / Double.pi
-            
-            var yAngle = qpitch*180 / Double.pi
-            
-            if self.Standing{
-                yAngle = qpitch*180 / Double.pi+90
-            }else{
-                yAngle = qpitch*180 / Double.pi
-                
-            }
-            
-            /// 係数を使って感度を調整する
-            let coefficient: CGFloat = 5
-            
-            let regulatedX = CGFloat(xAngle) * coefficient
-            let regulatedY = CGFloat(yAngle) * coefficient
-            
-            let currentPositionX = regulatedX+150
-            let currentPositionY = regulatedY+200
-            
-            
-            Task { @MainActor in
-                self.currentBallPosition = CGPoint(x: currentPositionX,
-                                                   y: currentPositionY)
-            }
-            
-            print("x: ", currentPositionX)
-            print("y: ", currentPositionY)
-            
+    override init() {
+        super.init()
+        start()
+        soundEnabled = UserDefaults.standard.bool(forKey: "SoundEnabled")
+        if let soundUrl = Bundle.main.url(forResource: "ding", withExtension: "aif") {
+            AudioServicesCreateSystemSoundID(soundUrl as CFURL, &soundId)
         }
+    
+    }
+    
+    func toggleSoundEnabled() {
+        soundEnabled.toggle()
+        UserDefaults.standard.set(soundEnabled, forKey: "SoundEnabled")
     }
     
 }
