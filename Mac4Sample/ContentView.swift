@@ -41,10 +41,21 @@ struct ContentView: View {
                 //時間表示
                 Group{
                     
-                    Button(action:
-                            {self.sensor.isStarted ? self.sensor.stop() : self.sensor.start()})
-                    {self.sensor.isStarted ? Text("STOP") : Text("START")}
-                    
+                    Button(action: {
+                        if self.sensor.isStarted {
+                            self.sensor.stop()
+                            self.sensor.characterdisplayStarted = false // センサーが停止したらcharacterdisplayStartedをfalseにする
+                        } else {
+                            self.sensor.start()
+                            self.sensor.characterdisplayStarted = true // センサーが開始されたらcharacterdisplayStartedをtrueにする
+                        }
+                    }) {
+                        if self.sensor.isStarted {
+                            Text("STOP")
+                        } else {
+                            Text("START")
+                        }
+                    }
                     Spacer()
                     
                     Button(action: {
@@ -91,5 +102,6 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
 
 

@@ -18,7 +18,9 @@ class MotionSensor:NSObject,ObservableObject{
     
     
     @Published var isStarted = false
+    @Published var characterdisplayStarted = false
     @Published var xStr = "0.0"
+    @Published var xvStr = "0.0"
     @Published var xStr2 = "0.0"
     @Published var yStr = "0.0"
     @Published var yStr2 = "0.0"
@@ -71,6 +73,22 @@ class MotionSensor:NSObject,ObservableObject{
                 self.updateMotionData(deviceMotion: motion!)
                 
             })
+            //音
+            soundEnabled = UserDefaults.standard.bool(forKey: "SoundEnabled")
+            if let soundUrl = Bundle.main.url(forResource: "ding", withExtension: "aif") {
+                AudioServicesCreateSystemSoundID(soundUrl as CFURL, &soundId)
+            }
+            
+            
+            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+                self.elapsedTime += 1
+                
+                // elapsedTimeが10000に達した場合、自動的にstop()を呼び出す
+                if self.elapsedTime >= 600 {
+                    self.stop()
+                    timer.invalidate()
+                }
+            }
         }
     }
     
@@ -157,17 +175,19 @@ class MotionSensor:NSObject,ObservableObject{
         
         let qpitch = atan2((2 * (qw * qx + qy * qz)), 1 - 2 * (qx * qx + qy * qy))*(-1)
         let qroll = 2*atan2 ( sqrt ( 1 + 2 * ( qw * qy - qx * qz )),sqrt ( 1 - 2 * ( qw * qy - qx * qz )) ) - (Double.pi/2)
-        
-        xStr = String(format:"%.2f",qpitch*180 / Double.pi)
-        xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
-        yStr2 = String(format:"%.2f",qroll*180 / Double.pi)
-        
-        if Standing{
-            xStr2 = String(format:"%.2f",qpitch*180 / Double.pi+90)
-        }else{
+  
+        xvStr = String(format:"%.2f",qpitch*180 / Double.pi)
+    
+        if characterdisplayStarted {
             xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
+            yStr2 = String(format:"%.2f",qroll*180 / Double.pi)
             
-        }
+            if Standing{
+                xStr2 = String(format:"%.2f",qpitch*180 / Double.pi+90)
+            }else{
+                xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
+                
+            }}
         //視覚的FBの計算
         let xAngle = qroll*180 / Double.pi
         
@@ -183,7 +203,7 @@ class MotionSensor:NSObject,ObservableObject{
         let coefficient: CGFloat = 5
         let regulatedX = CGFloat(xAngle) * coefficient
         let regulatedY = CGFloat(yAngle) * coefficient
-
+        
         let currentPositionX = regulatedX+150
         let currentPositionY = regulatedY+200
         
@@ -201,7 +221,7 @@ class MotionSensor:NSObject,ObservableObject{
         }
         
         // データを配列に追加
-        let data = MotionData(elapsedTime: elapsedTime, x2:qpitch*180 / Double.pi,y2:qroll*180 / Double.pi,x: deviceMotion.userAcceleration.x, y: deviceMotion.userAcceleration.y, z: deviceMotion.userAcceleration.z,sync: sync)
+        let data = MotionData(elapsedTime: elapsedTime, x2:qpitch*180 / Double.pi, xv:qpitch*180 / Double.pi,y2:qroll*180 / Double.pi,x: deviceMotion.userAcceleration.x, y: deviceMotion.userAcceleration.y, z: deviceMotion.userAcceleration.z,sync: sync)
         datas.append(data)
         
         //同期
@@ -209,20 +229,15 @@ class MotionSensor:NSObject,ObservableObject{
             sync = 0
             
         }
-
+        
         
     }
-    
     
     override init() {
         super.init()
         start()
-        soundEnabled = UserDefaults.standard.bool(forKey: "SoundEnabled")
-        if let soundUrl = Bundle.main.url(forResource: "ding", withExtension: "aif") {
-            AudioServicesCreateSystemSoundID(soundUrl as CFURL, &soundId)
-        }
-    
     }
+    
     
     func toggleSoundEnabled() {
         soundEnabled.toggle()
@@ -230,6 +245,7 @@ class MotionSensor:NSObject,ObservableObject{
     }
     
 }
+
 
 
 

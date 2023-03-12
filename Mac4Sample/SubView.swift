@@ -9,9 +9,7 @@ import SwiftUI
 import AVFoundation
 
 struct SubView: View {
-    @ObservedObject var sensor = MotionSensor()
     @StateObject private var viewModel = MotionSensor()
-    @StateObject private var MusicviewModel = MotionSensor()
     
     
     var body: some View {
@@ -20,18 +18,21 @@ struct SubView: View {
                 .position(viewModel.currentBallPosition)
         }
         
-//        Button(action:
-//                {self.sensor.isStarted ? self.sensor.stop() : self.sensor.start()})
-//        {self.sensor.isStarted ? Text("STOP") : Text("START")}
+//                Button(action:
+//                        {self.sensor.isStarted ? self.sensor.stop() : self.sensor.start()})
+//                {self.sensor.isStarted ? Text("STOP") : Text("START")}
         
         VStack {
             Slider(value: $viewModel.thresholdAngle, in: -180...30, step: 1)
                 .padding()
             Text("Threshold: \(Int(viewModel.thresholdAngle))")
                 .padding()
-            Text(viewModel.xStr)
+            Text(viewModel.xvStr)
                 .padding()
             Toggle("Sound", isOn: $viewModel.soundEnabled)
+                .padding()
+            //90°
+            Toggle("Stand", isOn: $viewModel.Standing)
                 .padding()
         }
         .onAppear {
@@ -39,23 +40,12 @@ struct SubView: View {
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button(action: MusicviewModel.toggleSoundEnabled) {
+                Button(action: viewModel.toggleSoundEnabled) {
                     Image(systemName: viewModel.soundEnabled ? "speaker.fill" : "speaker.slash.fill")
                 }
             }
         }
-     
-            
-            Spacer()
-        
-        
-            
-            
-            //新しいボタン（縦90度）
-            Toggle(isOn: $viewModel.Standing){
-                Text("Stand")
-                
-            }
-        }
+        Spacer()
     }
+}
 
