@@ -7,101 +7,72 @@
 
 import SwiftUI
 
-struct MyData {
-    var timestamp: Date
-    var name: String
-    var number: Int
-}
-
-
 struct ContentView: View {
     
-    @ObservedObject var sensor = MotionSensor()
+    @ObservedObject var sensor = ContentViewModel()
+    @Environment(\.scenePhase) private var scenePhase
     
     var body: some View {
+        ZStack {
+            SoccerBall(length: sensor.ballLength)
+                .position(sensor.currentBallPosition)
+        }
         
-        NavigationView {
+        HStack {
+            Text("(前後傾)°:")
+            Text(sensor.xStr2)
+            Text("(挙上下制)°:")
+            Text(sensor.yStr2)
+        }
+        
+        Button(action: {
+            self.sensor.isStarted ? self.sensor.stop() : self.sensor.start()
+        }) {
+            self.sensor.isStarted ? Text("STOP") : Text("START")
+        }
+        
+        Group {
+            Text("(前後傾)°: \(Int(sensor.thresholdAngle))")
+            Slider(value: $sensor.thresholdAngle, in: -180...30, step: 1)
+            Toggle("Sound", isOn: $sensor.soundEnabled)
+            Toggle("Stand", isOn: $sensor.Standing)
             
-            VStack {
-                
-                Spacer()
-                HStack {
-                    Text("X:")
-                        .font(.system(size: 60.0))
-                    Text(sensor.xStr2)
-                        .font(.system(size: 60.0))
+            Button(action: {
+                sensor.syncr()
+            }) {
+                Label("sync", systemImage: "personalhotspot.circle.fill")
+            }
+            
+            Button(action: {
+                sensor.share()
+            }) {
+                Label("share", systemImage: "square.and.arrow.up")
+            }
+            .onChange(of: scenePhase) { newScenePhase in
+                if newScenePhase == .background {
+                    self.sensor.stop()
                 }
-                HStack {
-                    Text("Y:")
-                        .font(.system(size: 60.0))
-                    Text(sensor.yStr2)
-                        .font(.system(size: 60.0))
-                }
-                Spacer()
-                //時間表示
-                Group{
-                    
-                    Button(action: {
-                        if self.sensor.isStarted {
-                            self.sensor.stop()
-                            self.sensor.characterdisplayStarted = false // センサーが停止したらcharacterdisplayStartedをfalseにする
-                        } else {
-                            self.sensor.start()
-                            self.sensor.characterdisplayStarted = true // センサーが開始されたらcharacterdisplayStartedをtrueにする
-                        }
-                    }) {
-                        if self.sensor.isStarted {
-                            Text("STOP")
-                        } else {
-                            Text("START")
-                        }
-                    }
-                    Spacer()
-                    
-                    Button(action: {
-                        sensor.share()
-                    }) {
-                        Label("shere", systemImage: "square.and.arrow.up")
-                    }
-                    Spacer()
-                    
-                    //新しいボタン（シンクロ）
-                    Button(action: {
-                        sensor.syncr()
-                    }) {
-                        Label("sync", systemImage: "personalhotspot.circle.fill")
-                    }
-                    
-                    Spacer()
-                    
-                    //新しいボタン（縦90度）
-                    Toggle(isOn: $sensor.Standing){
-                        Text("Stand")
-                        
-                    }
-                    Spacer()
-                }
-                //サブビュー
-                NavigationLink (destination: SubView()){
-                    Label("Visual", systemImage: "arrowshape.right.fill")
-                    Image(systemName: "eye.circle")
-                }
-                .navigationTitle("Angle")
-                
+            }
+            Picker("", selection: $sensor.updateInterval) {
+                Text("Hz:10").tag(0.1)
+                Text("Hz:30").tag(0.0333)
+                Text("Hz:60").tag(0.01667)
+                Text("Hz:80").tag(0.0125)
+                Text("Hz:100").tag(0.01)
             }
         }
-        .navigationViewStyle(.stack)
+        .onChange(of: scenePhase) { newScenePhase in
+            if newScenePhase == .background {
+                self.sensor.stop()
+            }
+        }
     }
-    
 }
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
 }
-
-
+    
 

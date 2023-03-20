@@ -1,38 +1,29 @@
-//
-//  MotionSensor.swift
+//  ContentViewModel.swift
 //  Mac4Sample
 //
-//  Created by yuksblog on 2023/01/01.
+//  Created by 塩見誠 on 2023/02/28.
 //
-//push
-
 import Foundation
 import CoreMotion
 import CoreTransferable
 import SSZipArchive
 import AudioToolbox
 
-
-class MotionSensor:NSObject,ObservableObject{
-    static var shared=MotionSensor()
-    
+class ContentViewModel: ObservableObject{
+//    var motionsensor=MotionSensor.shared
     
     @Published var isStarted = false
-    @Published var characterdisplayStarted = false
     @Published var xStr = "0.0"
-    @Published var xvStr = "0.0"
     @Published var xStr2 = "0.0"
+    @Published var xvStr = "0.0"
     @Published var yStr = "0.0"
     @Published var yStr2 = "0.0"
     @Published var zStr = "0.0"
-    //音
-    @Published var thresholdAngle: Double = -90
-    @Published var soundEnabled: Bool = true
-    
-    
     
     // CoreMotionのCMMotionManagerを保持する
     let motionManager = CMMotionManager()
+    
+    var updateInterval: Double = 0.1
     // センサーデータを一時的に保存する配列
     var datas: [MotionData] = []
     // 共有するファイルのパス
@@ -44,20 +35,22 @@ class MotionSensor:NSObject,ObservableObject{
     //姿勢変換
     var Standing = true
     
+    @Published var characterdisplayStarted = false
+    
+    //音
+    @Published var thresholdAngle: Double = -90
+    @Published var soundEnabled: Bool = false
+    private var soundId: SystemSoundID = 1000
+    
     //視覚的FB
     @Published var currentBallPosition: CGPoint = .init()
     let ballLength: CGFloat = 120
     
-    
-    //音
-    private var soundId: SystemSoundID = 1000
-    
-    
-    
-    
     func start() {
         if motionManager.isDeviceMotionAvailable {
             isStarted = true
+            characterdisplayStarted = true
+            soundEnabled = true
             
             // TODO 古いファイルを削除
             
@@ -68,7 +61,7 @@ class MotionSensor:NSObject,ObservableObject{
             elapsedTime = 0.00
             
             // センサー値の取得を開始
-            motionManager.deviceMotionUpdateInterval = 0.1
+            motionManager.deviceMotionUpdateInterval = updateInterval
             motionManager.startDeviceMotionUpdates(to: OperationQueue.current!, withHandler: {(motion:CMDeviceMotion?, error:Error?) in
                 self.updateMotionData(deviceMotion: motion!)
                 
@@ -79,15 +72,10 @@ class MotionSensor:NSObject,ObservableObject{
                 AudioServicesCreateSystemSoundID(soundUrl as CFURL, &soundId)
             }
             
-            
-            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-                self.elapsedTime += 1
+            // elapsedTimeが10000に達した場合、自動的にstop()を呼び出す
+            if elapsedTime >= 600 {
+                stop()
                 
-                // elapsedTimeが10000に達した場合、自動的にstop()を呼び出す
-                if self.elapsedTime >= 600 {
-                    self.stop()
-                    timer.invalidate()
-                }
             }
         }
     }
@@ -97,6 +85,8 @@ class MotionSensor:NSObject,ObservableObject{
         // 停止
         isStarted = false
         motionManager.stopDeviceMotionUpdates()
+        characterdisplayStarted = false
+        soundEnabled = false
         
         // 取得データがあったら、ファイルに保存しておく
         if !datas.isEmpty {
@@ -156,15 +146,12 @@ class MotionSensor:NSObject,ObservableObject{
         rootVC?.present(activityVC, animated: true, completion: {})
     }
     
-    
-    
     private func updateMotionData(deviceMotion:CMDeviceMotion) {
         if !isStarted {
             return
         }
         
-        
-        elapsedTime = elapsedTime + 0.1
+        elapsedTime = elapsedTime + updateInterval
         //角度
         let attitude = deviceMotion.attitude
         
@@ -175,19 +162,16 @@ class MotionSensor:NSObject,ObservableObject{
         
         let qpitch = atan2((2 * (qw * qx + qy * qz)), 1 - 2 * (qx * qx + qy * qy))*(-1)
         let qroll = 2*atan2 ( sqrt ( 1 + 2 * ( qw * qy - qx * qz )),sqrt ( 1 - 2 * ( qw * qy - qx * qz )) ) - (Double.pi/2)
-  
-        xvStr = String(format:"%.2f",qpitch*180 / Double.pi)
-    
-        if characterdisplayStarted {
-            xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
-            yStr2 = String(format:"%.2f",qroll*180 / Double.pi)
-            
-            if Standing{
-                xStr2 = String(format:"%.2f",qpitch*180 / Double.pi+90)
-            }else{
-                xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
-                
-            }}
+        
+        xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
+        yStr2 = String(format:"%.2f",qroll*180 / Double.pi)
+        
+//        if Standing{
+//            xStr2 = String(format:"%.2f",qpitch*180 / Double.pi+90)
+//        }else{
+//            xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
+//
+//        }
         //視覚的FBの計算
         let xAngle = qroll*180 / Double.pi
         
@@ -196,56 +180,38 @@ class MotionSensor:NSObject,ObservableObject{
             yAngle = qpitch*180 / Double.pi+90
         }else{
             yAngle = qpitch*180 / Double.pi
-            
         }
-        
-        /// 係数を使って感度を調整する
         let coefficient: CGFloat = 5
         let regulatedX = CGFloat(xAngle) * coefficient
         let regulatedY = CGFloat(yAngle) * coefficient
         
-        let currentPositionX = regulatedX+150
-        let currentPositionY = regulatedY+200
+        let currentPositionX = regulatedX+UIScreen.main.bounds.width / 2
+        let currentPositionY = regulatedY+UIScreen.main.bounds.height / 2-100
         
         Task { @MainActor in
             self.currentBallPosition = CGPoint(x: currentPositionX,
                                                y: currentPositionY)
         }
         
-        print("x: ", currentPositionX)
-        print("y: ", currentPositionY)
-        print("qpitch: ", qpitch*180 / Double.pi)
+                print("x: ", currentPositionX)
+                print("y: ", currentPositionY)
+                print("qpitch: ", qpitch*180 / Double.pi)
+                print("Hz: ", updateInterval)
         
         if soundEnabled && (qpitch*180 / Double.pi) < thresholdAngle { // 音を鳴らす設定がONで、閾値を超えた場合に音を鳴らす
             AudioServicesPlaySystemSound(soundId)
         }
-        
         // データを配列に追加
         let data = MotionData(elapsedTime: elapsedTime, x2:qpitch*180 / Double.pi, xv:qpitch*180 / Double.pi,y2:qroll*180 / Double.pi,x: deviceMotion.userAcceleration.x, y: deviceMotion.userAcceleration.y, z: deviceMotion.userAcceleration.z,sync: sync)
         datas.append(data)
-        
         //同期
         if sync == 1 {
             sync = 0
             
         }
-        
-        
     }
-    
-    override init() {
-        super.init()
-        start()
-    }
-    
-    
     func toggleSoundEnabled() {
         soundEnabled.toggle()
         UserDefaults.standard.set(soundEnabled, forKey: "SoundEnabled")
     }
-    
 }
-
-
-
-

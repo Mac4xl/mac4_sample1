@@ -11,6 +11,8 @@ import AVFoundation
 struct SubView: View {
     @StateObject private var viewModel = MotionSensor()
     
+    var motionsensor=MotionSensor.shared
+    
     
     var body: some View {
         ZStack {
