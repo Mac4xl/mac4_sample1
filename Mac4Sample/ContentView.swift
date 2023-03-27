@@ -13,7 +13,7 @@ struct ContentView: View {
                 }) {
                     Label("sync", systemImage: "personalhotspot.circle.fill")
                 }
-                .padding(13)
+                .padding(11)
                 .foregroundColor(.white)
                 .background(.brown)
                 .cornerRadius(24)
@@ -26,7 +26,7 @@ struct ContentView: View {
                     Label("share", systemImage: "square.and.arrow.up")
                     
                 }
-                .padding(12)
+                .padding(9)
                 .foregroundColor(.white)
                 .background(.orange)
                 .cornerRadius(24)
@@ -38,7 +38,7 @@ struct ContentView: View {
                     Text("Hz:80").tag(0.0125)
                     Text("Hz:100").tag(0.01)
                 }
-                .padding(5)
+                .padding(3)
                 .foregroundColor(.white)
                 .background(.yellow)
                 .cornerRadius(20)
@@ -60,6 +60,13 @@ struct ContentView: View {
                             Text("\(sensor.yStr2)°")
                             
                         }
+                        Text(" \(Int(sensor.thresholdAngle))°")
+                            .overlay(RoundedRectangle(cornerRadius: 30)
+                                .stroke(Color.blue, lineWidth: 3))
+                            .clipShape(RoundedRectangle(cornerRadius: 30))
+                        Slider(value: $sensor.thresholdAngle, in: -180...30, step:1,minimumValueLabel: Text("後傾"), maximumValueLabel: Text("前傾"), label: {})
+                        Toggle("Sound", isOn: $sensor.soundEnabled)
+                        Toggle("Stand", isOn: $sensor.Standing)
                         Button(action: {
                             self.sensor.isStarted ? self.sensor.stop() : self.sensor.start()
                         }) {
@@ -69,10 +76,6 @@ struct ContentView: View {
                         .foregroundColor(.white)
                         .background(.gray)
                         .cornerRadius(24)
-                        Text(" \(Int(sensor.thresholdAngle))°")
-                        Slider(value: $sensor.thresholdAngle, in: -180...30, step:1,minimumValueLabel: Text("後傾"), maximumValueLabel: Text("前傾"), label: {})
-                        Toggle("Sound", isOn: $sensor.soundEnabled)
-                        Toggle("Stand", isOn: $sensor.Standing)
                         
                         //
                         //                    .onChange(of: scenePhase) { newScenePhase in
