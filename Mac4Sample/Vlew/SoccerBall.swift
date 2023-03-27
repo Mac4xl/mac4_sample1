@@ -14,8 +14,8 @@ struct SoccerBall: View {
     var body: some View {
         Image(systemName: "circle.fill")
             .font(.system(size: length))
-            .foregroundColor(.green)
-            .shadow(radius: 1)
+            .foregroundColor(.mint)
+            .shadow(radius: 50)
     }
 }
 
