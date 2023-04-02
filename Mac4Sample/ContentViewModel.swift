@@ -8,9 +8,10 @@ import CoreMotion
 import CoreTransferable
 import SSZipArchive
 import AudioToolbox
+import AVFoundation
 
 class ContentViewModel: ObservableObject{
-//    var motionsensor=MotionSensor.shared
+    //    var motionsensor=MotionSensor.shared
     
     @Published var isStarted = false
     @Published var xStr = "0.0"
@@ -37,10 +38,12 @@ class ContentViewModel: ObservableObject{
     
     @Published var characterdisplayStarted = false
     
-    //音
+    
     @Published var thresholdAngle: Double = -90
+    //音
     @Published var soundEnabled: Bool = false
     private var soundId: SystemSoundID = 1000
+    var isPlaying = false
     
     //視覚的FB
     @Published var currentBallPosition: CGPoint = .init()
@@ -66,15 +69,13 @@ class ContentViewModel: ObservableObject{
                 self.updateMotionData(deviceMotion: motion!)
                 
             })
+            
             //音
+            //            @Published var soundEnabled: Bool = false
+            //            private var soundId: SystemSoundID = 1000
             soundEnabled = UserDefaults.standard.bool(forKey: "SoundEnabled")
             if let soundUrl = Bundle.main.url(forResource: "ding", withExtension: "aif") {
                 AudioServicesCreateSystemSoundID(soundUrl as CFURL, &soundId)
-            }
-            
-            // elapsedTimeが10000に達した場合、自動的にstop()を呼び出す
-            if elapsedTime >= 600 {
-                stop()
                 
             }
         }
@@ -166,12 +167,12 @@ class ContentViewModel: ObservableObject{
         xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
         yStr2 = String(format:"%.2f",qroll*180 / Double.pi)
         
-//        if Standing{
-//            xStr2 = String(format:"%.2f",qpitch*180 / Double.pi+90)
-//        }else{
-//            xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
-//
-//        }
+        //        if Standing{
+        //            xStr2 = String(format:"%.2f",qpitch*180 / Double.pi+90)
+        //        }else{
+        //            xStr2 = String(format:"%.2f",qpitch*180 / Double.pi)
+        //
+        //        }
         //視覚的FBの計算
         let xAngle = qroll*180 / Double.pi
         
@@ -193,20 +194,27 @@ class ContentViewModel: ObservableObject{
                                                y: currentPositionY)
         }
         
-                print("x: ", currentPositionX)
-                print("y: ", currentPositionY)
-                print("qpitch: ", qpitch*180 / Double.pi)
-                print("Hz: ", updateInterval)
+        print("x: ", currentPositionX)
+        print("y: ", currentPositionY)
+        print("qpitch: ", qpitch*180 / Double.pi)
+        print("Hz: ", elapsedTime)
         
-        if soundEnabled && (qpitch*180 / Double.pi) < thresholdAngle { // 音を鳴らす設定がONで、閾値を超えた場合に音を鳴らす
-            AudioServicesPlaySystemSound(soundId)
-        }
+        if soundEnabled && (qpitch*180 / Double.pi) < thresholdAngle && !isPlaying {
+                    AudioServicesPlaySystemSound(soundId)
+//                    isPlaying = true
+                }
+        
         // データを配列に追加
         let data = MotionData(elapsedTime: elapsedTime, x2:qpitch*180 / Double.pi, xv:qpitch*180 / Double.pi,y2:qroll*180 / Double.pi,x: deviceMotion.userAcceleration.x, y: deviceMotion.userAcceleration.y, z: deviceMotion.userAcceleration.z,sync: sync)
         datas.append(data)
         //同期
         if sync == 1 {
             sync = 0
+            
+        }
+        // elapsedTimeが10minに達した場合、自動的にstop()を呼び出す
+        if elapsedTime >= 6000 {
+            stop()
             
         }
     }
