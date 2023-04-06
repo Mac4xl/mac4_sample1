@@ -15,5 +15,5 @@ struct MotionData {
     var x: Double
     var y: Double
     var z: Double
-    var sync: Int
+    var sync: String
 }

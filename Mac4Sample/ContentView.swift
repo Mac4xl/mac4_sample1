@@ -7,6 +7,8 @@ struct ContentView: View {
     @ObservedObject var sensor = ContentViewModel()
     @Environment(\.scenePhase) private var scenePhase
     @State private var isShowingLandingPage = true
+    @State var isPressed = false
+
     
     var body: some View {
         
@@ -34,12 +36,13 @@ struct ContentView: View {
                                     HStack {
                                         Button(action: {
                                             sensor.syncr()
+                                            isPressed.toggle()
                                         }) {
                                             Label("sync", systemImage: "personalhotspot.circle.fill")
                                         }
                                         .padding(10)
                                         .foregroundColor(.white)
-                                        .background(.brown)
+                                        .background(isPressed ? .green : .brown)
                                         .cornerRadius(24)
                                         //                .overlay(RoundedRectangle(cornerRadius: 30)
                                         //                    .stroke(Color.blue, lineWidth: 3))

@@ -32,7 +32,8 @@ class ContentViewModel: ObservableObject{
     //時間経過ゼロ
     var elapsedTime = 0.00
     //同期
-    var sync = 0
+    var sync: String = ""
+    
     //姿勢変換
     var Standing = true
     
@@ -78,6 +79,7 @@ class ContentViewModel: ObservableObject{
                 AudioServicesCreateSystemSoundID(soundUrl as CFURL, &soundId)
                 
             }
+            //sync = String("")
         }
     }
     
@@ -129,7 +131,7 @@ class ContentViewModel: ObservableObject{
     }
     //    同期の関数
     func syncr() {
-        sync=1
+        sync="-----"
     }
     
     func share() {
@@ -205,11 +207,13 @@ class ContentViewModel: ObservableObject{
                 }
         
         // データを配列に追加
-        let data = MotionData(elapsedTime: elapsedTime, x2:qpitch*180 / Double.pi, xv:qpitch*180 / Double.pi,y2:qroll*180 / Double.pi,x: deviceMotion.userAcceleration.x, y: deviceMotion.userAcceleration.y, z: deviceMotion.userAcceleration.z,sync: sync)
+        let Stringsync = String(sync)
+                
+        let data = MotionData(elapsedTime: elapsedTime, x2:qpitch*180 / Double.pi, xv:qpitch*180 / Double.pi,y2:qroll*180 / Double.pi,x: deviceMotion.userAcceleration.x, y: deviceMotion.userAcceleration.y, z: deviceMotion.userAcceleration.z,sync:Stringsync)
         datas.append(data)
         //同期
-        if sync == 1 {
-            sync = 0
+        if sync == "-----" {
+            sync = ""
             
         }
         // elapsedTimeが10minに達した場合、自動的にstop()を呼び出す
